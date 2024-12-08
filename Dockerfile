@@ -34,11 +34,11 @@ COPY --from=builder /app/nest-cli.json ./
 
 # Set environment variables
 ENV NODE_ENV=production
-ENV PORT=8080
+ENV PORT=3000
 ENV HOST=0.0.0.0
 
 # Cloud Run will dynamically assign a port, so we use 8080 by default
-EXPOSE 8080
+EXPOSE 3000
 
 # Run as root user (Cloud Run requirement)
 USER root
