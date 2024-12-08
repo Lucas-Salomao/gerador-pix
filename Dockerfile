@@ -1,12 +1,13 @@
-# Build Stage
+# Use the official Node.js runtime as the base image
 FROM node:18-alpine AS builder
 
+# Set working directory
 WORKDIR /app
 
 # Copy package files
 COPY package*.json ./
 
-# Install all dependencies (including dev dependencies for build)
+# Install dependencies
 RUN npm ci
 
 # Copy source code
@@ -18,9 +19,7 @@ RUN npm run build
 # Production Stage
 FROM node:18-alpine AS production
 
-# Optional: run with non-root user for better security
-USER node
-
+# Set working directory
 WORKDIR /app
 
 # Copy package files
@@ -31,17 +30,24 @@ RUN npm ci --only=production
 
 # Copy built application from builder stage
 COPY --from=builder /app/dist ./dist
-
-# Copy any additional necessary files
 COPY --from=builder /app/nest-cli.json ./
 
-# Environment variables
-ENV NODE_ENV production
-ENV PORT 3000
-ENV HOST 0.0.0.0
+# Set environment variables
+ENV NODE_ENV=production
+ENV PORT=8080
+ENV HOST=0.0.0.0
 
-# Expose port
-EXPOSE 3000
+# Cloud Run will dynamically assign a port, so we use 8080 by default
+EXPOSE 8080
 
-# Start the server using production build
+# Run as root user (Cloud Run requirement)
+USER root
+
+# Ensure proper permissions
+RUN chown -R node:node /app
+
+# Switch to node user (optional, but good practice)
+USER node
+
+# Start the server
 CMD [ "node", "dist/main.js" ]
