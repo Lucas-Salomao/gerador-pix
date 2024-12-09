@@ -13,8 +13,11 @@ RUN npm install
 # Copiar o resto do código fonte
 COPY . .
 
-# Comando para iniciar a aplicação em modo de desenvolvimento
-CMD ["npm", "run", "start:dev"]
+# Build the application
+RUN npm run build
+
+# Run the web service on container startup.
+CMD [ "npm", "run", "start:prod" ]
 
 # # Use the official Node.js runtime as the base image
 # FROM node:18-alpine AS builder
