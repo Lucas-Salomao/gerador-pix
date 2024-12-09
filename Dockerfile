@@ -2,7 +2,7 @@
 FROM node:18-alpine
 
 # Definir diretório de trabalho no container
-WORKDIR /app
+WORKDIR /usr/src/app
 
 # Copiar arquivos de configuração de dependências
 COPY package*.json ./
@@ -12,9 +12,6 @@ RUN npm install
 
 # Copiar o resto do código fonte
 COPY . .
-
-# Expor a porta que a aplicação NestJS vai rodar
-EXPOSE 3000
 
 # Comando para iniciar a aplicação em modo de desenvolvimento
 CMD ["npm", "run", "start:dev"]
